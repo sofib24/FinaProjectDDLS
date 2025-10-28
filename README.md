@@ -1,0 +1,2 @@
+# FinaProjectDDLS
+Segmentation model 
