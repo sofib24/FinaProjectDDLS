@@ -1,0 +1,39 @@
+A: T-47D ductal carcinoma (Orange CMTMR)
+B: A375 melanoma (Orange CMTMR)
+C: MG-63 osteosarcoma (Orange CMTMR)
+MRC-5 fibroblasts (Deep Red)
+EA.hy926 endothelial cells (Green CMFDA)
++ Nuclei (Hoechst 33342)
+
+ch001: Hoechst/Nuclei
+ch002: Endothelial 
+ch003: Tumor 
+ch004: Fibroblast 
+
+16-bit Tiff files 
+2048 × 2048, with pixel size 0.14370117 µm
+z-stack is 3.7 µm
+
+
+FILE NAMES:
+All the files in this collection follow this terminology:
+“TumourType_+*_TimePoint_SpheroidID_channelID.tif”
+*If treatment was applied.
+
+TIME POINTS:
+
+24h
+48h
+96h
+
+
+For each tumour cell line and time point, five spheroids have been imaged under both drug-treated and control conditions.
+
+
+ /chat save gemini_chat_FP   
+
+
+
+
+cd /content/drive/MyDrive/DDLS-Course/FinalProject/
+cp /root/.gemini/tmp/*/checkpoint-gemini_chat_FP.json .
