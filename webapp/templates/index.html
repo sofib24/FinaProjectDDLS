@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cell Type Classification</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+        <h1 class="text-2xl font-bold mb-6 text-center">Upload Image for Classification</h1>
+        <form id="uploadForm" class="space-y-4">
+            <div>
+                <label for="file" class="block text-sm font-medium text-gray-700">Select Image</label>
+                <input type="file" name="file" id="file" accept="image/*" class="mt-1 block w-full text-sm text-gray-500
+                    file:mr-4 file:py-2 file:px-4
+                    file:rounded-full file:border-0
+                    file:text-sm file:font-semibold
+                    file:bg-blue-50 file:text-blue-700
+                    hover:file:bg-blue-100"/>
+            </div>
+            <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                Upload
+            </button>
+        </form>
+        <div id="loading" class="mt-4 text-center text-blue-600 hidden">
+            Processing image...
+        </div>
+        <div id="result" class="mt-6 hidden">
+            <h2 class="text-xl font-bold mb-4 text-center">Prediction Result</h2>
+            <img id="resultImage" src="" alt="Prediction Result" class="max-w-full h-auto mx-auto border rounded-md"/>
+            <div id="diceScores" class="mt-4 text-center">
+                <!-- Dice scores will be displayed here -->
+            </div>
+            <div id="lossPlot" class="mt-6 hidden">
+                <h2 class="text-xl font-bold mb-4 text-center">Training Loss Plot</h2>
+                <img id="lossPlotImage" src="" alt="Training Loss Plot" class="max-w-full h-auto mx-auto border rounded-md"/>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const form = event.target;
+            const formData = new FormData(form);
+            const loadingDiv = document.getElementById('loading');
+            const resultDiv = document.getElementById('result');
+            const resultImage = document.getElementById('resultImage');
+            const diceScoresDiv = document.getElementById('diceScores');
+            const lossPlotDiv = document.getElementById('lossPlot');
+            const lossPlotImage = document.getElementById('lossPlotImage');
+
+            loadingDiv.classList.remove('hidden');
+            resultDiv.classList.add('hidden');
+            diceScoresDiv.innerHTML = ''; // Clear previous scores
+            lossPlotDiv.classList.add('hidden'); // Hide loss plot initially
+
+            try {
+                const response = await fetch('/uploadfile/', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                if (data.image_base64) {
+                    resultImage.src = `data:image/png;base64,${data.image_base64}`;
+                    resultDiv.classList.remove('hidden');
+
+                    // Display Dice scores
+                    if (data.dice_scores) {
+                        let scoresHtml = '<p class="text-lg font-semibold">Dice Scores:</p>';
+                        for (const [key, value] of Object.entries(data.dice_scores)) {
+                            scoresHtml += `<p>${key}: ${value}</p>`;
+                        }
+                        diceScoresDiv.innerHTML = scoresHtml;
+                    }
+
+                    // Display Loss Plot
+                    if (data.loss_plot_base64) {
+                        lossPlotImage.src = `data:image/png;base64,${data.loss_plot_base64}`;
+                        lossPlotDiv.classList.remove('hidden');
+                    }
+                }
+            } catch (error) {
+                console.error('Error during upload:', error);
+                alert('Failed to upload image. Please try again.');
+            } finally {
+                loadingDiv.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

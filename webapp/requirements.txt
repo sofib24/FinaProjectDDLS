@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+Pillow
+torch
+numpy
+scikit-image
+opencv-python
+matplotlib
